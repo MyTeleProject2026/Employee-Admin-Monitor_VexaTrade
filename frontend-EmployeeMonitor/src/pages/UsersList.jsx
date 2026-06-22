@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye } from 'lucide-react';
+import { Eye, Search } from 'lucide-react';
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from '../components/StatusBadge';
 
@@ -35,54 +35,56 @@ export default function UsersList() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Users</h1>
-        <input
-          type="text"
-          placeholder="Search by name, email, UID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="rounded-xl border border-white/10 bg-[#0a0e1a] px-4 py-2 text-sm text-white outline-none focus:border-cyan-500 w-full sm:w-64"
-        />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h1 className="text-xl sm:text-2xl font-bold">Monitored Users</h1>
+        <div className="relative">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:w-56 rounded-xl border border-white/10 bg-[#0a0e1a] pl-9 pr-3 py-2 text-sm text-white outline-none focus:border-cyan-500"
+          />
+        </div>
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="border-b border-white/10 bg-[#050812]">
-            <tr>
-              <th className="px-4 py-3 text-left text-slate-400 font-medium">Name</th>
-              <th className="px-4 py-3 text-left text-slate-400 font-medium">UID</th>
-              <th className="px-4 py-3 text-left text-slate-400 font-medium">Email</th>
-              <th className="px-4 py-3 text-left text-slate-400 font-medium">Status</th>
-              <th className="px-4 py-3 text-right text-slate-400 font-medium">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="px-4 py-6 text-center text-slate-500">No users found.</td>
-              </tr>
-            ) : (
-              filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-                  <td className="px-4 py-3 text-white">{user.name || '—'}</td>
-                  <td className="px-4 py-3 text-slate-300">{user.uid || '—'}</td>
-                  <td className="px-4 py-3 text-slate-300">{user.email || '—'}</td>
-                  <td className="px-4 py-3"><StatusBadge status={user.status || 'Active'} /></td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => navigate(`/users/${user.id}`)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
-                    >
-                      <Eye size={14} /> View
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {filteredUsers.length === 0 ? (
+        <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
+          <div className="text-4xl mb-3">👤</div>
+          <p>No users found</p>
+          <p className="text-xs mt-1">Add users from User Management page</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filteredUsers.map((user) => (
+            <div
+              key={user.id}
+              className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 hover:border-white/20 transition"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-semibold text-white truncate">{user.name || '—'}</span>
+                    <StatusBadge status={user.status || 'Active'} />
+                  </div>
+                  <div className="mt-1 text-xs text-slate-400">
+                    <span className="font-mono">{user.uid || '—'}</span>
+                    <span className="mx-2">•</span>
+                    <span className="truncate">{user.email || '—'}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate(`/users/${user.id}`)}
+                  className="shrink-0 ml-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
+                >
+                  <Eye size={14} className="inline mr-1" /> View
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
