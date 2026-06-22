@@ -11,8 +11,32 @@ export function useEmployeeData(endpoint, dependencies = []) {
       try {
         setLoading(true);
         const res = await apiClient.get(endpoint);
-        // Handle both { success: true, data: ... } and direct array responses
-        const responseData = res.data?.data || res.data;
+        let responseData = res.data?.data || res.data;
+
+        // Get assigned users from localStorage
+        const assignedUsersStr = localStorage.getItem('assignedUsers');
+        const assignedUsers = assignedUsersStr ? JSON.parse(assignedUsersStr) : [];
+        const assignedUids = assignedUsers.map(u => u.uid || u);
+
+        // If we have assigned users and the data is an array, filter it
+        if (assignedUsers.length > 0 && Array.isArray(responseData)) {
+          // Check if data has user_id or user_uid field
+          responseData = responseData.filter(item => {
+            const userUid = item.uid || item.user_uid || item.user?.uid;
+            if (userUid) {
+              return assignedUids.includes(userUid);
+            }
+            // If no uid field, check user_id
+            const userId = item.user_id || item.userId;
+            if (userId) {
+              // We need to get user details to check uid - this is a fallback
+              // Ideally your API should return uid directly
+              return true; // Keep for now
+            }
+            return true;
+          });
+        }
+
         setData(responseData);
         setError(null);
       } catch (err) {
