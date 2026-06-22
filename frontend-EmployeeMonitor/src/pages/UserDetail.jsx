@@ -48,6 +48,7 @@ export default function UserDetail() {
 
   return (
     <div>
+      {/* Back button */}
       <button
         onClick={() => navigate('/users')}
         className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-4 transition"
@@ -55,36 +56,48 @@ export default function UserDetail() {
         <ArrowLeft size={16} /> Back to Users
       </button>
 
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">{user.name || 'Unnamed User'}</h1>
-          <div className="flex items-center gap-3 mt-1 text-sm text-slate-400">
-            <span>UID: {user.uid || '—'}</span>
-            <span>•</span>
-            <span>{user.email || '—'}</span>
-            <span>•</span>
-            <StatusBadge status={user.status || 'Active'} />
+      {/* User header */}
+      <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1 className="text-lg sm:text-xl font-bold text-white">{user.name || 'Unnamed User'}</h1>
+            <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-slate-400">
+              <span className="font-mono text-xs">{user.uid || '—'}</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="truncate max-w-[180px] sm:max-w-none">{user.email || '—'}</span>
+              <span className="hidden sm:inline">•</span>
+              <StatusBadge status={user.status || 'Active'} />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Wallet size={16} className="text-cyan-400" />
+            <span className="text-white font-semibold">{user.balance || '0.00'} USDT</span>
           </div>
         </div>
       </div>
 
-      <div className="flex overflow-x-auto border-b border-white/10 mb-6">
+      {/* Tabs - scrollable on mobile */}
+      <div className="flex overflow-x-auto gap-1 border-b border-white/10 mb-4 pb-0.5">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition ${
-              activeTab === tab.key
+            className={`
+              flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap
+              border-b-2 transition
+              ${activeTab === tab.key
                 ? 'border-cyan-400 text-cyan-400'
                 : 'border-transparent text-slate-400 hover:text-white'
-            }`}
+              }
+            `}
           >
-            <tab.icon size={16} />
+            <tab.icon size={15} className="sm:size-16" />
             <span>{tab.label}</span>
           </button>
         ))}
       </div>
 
+      {/* Tab content */}
       <div>
         {activeTab === 'overview' && <UserOverview user={user} />}
         {activeTab === 'deposits' && <DepositsTab userId={userId} />}
