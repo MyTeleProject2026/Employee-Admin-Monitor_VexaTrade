@@ -28,14 +28,17 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    const name = employeeName.trim();
+    // ✅ Safe trim check
+    const name = employeeName ? employeeName.trim() : '';
     if (!name) {
       setError('Please enter your employee name');
       setLoading(false);
       return;
     }
 
-    if (!password) {
+    // ✅ Safe trim check
+    const pass = password ? password.trim() : '';
+    if (!pass) {
       setError('Please enter your password');
       setLoading(false);
       return;
@@ -46,7 +49,7 @@ export default function Login() {
     try {
       const res = await apiClient.post('/api/employee/login', {
         email: email,
-        password: password,
+        password: pass,
       });
 
       if (res.data?.success) {
@@ -100,7 +103,7 @@ export default function Login() {
               <input
                 type="text"
                 value={employeeName}
-                onChange={(e) => setEmployeeName(e.target.value)}
+                onChange={(e) => setEmployeeName(e.target.value || '')}
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-4 py-3 text-white outline-none focus:border-cyan-500 transition"
                 placeholder="Enter your name (e.g., John)"
                 required
@@ -119,7 +122,7 @@ export default function Login() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value || '')}
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-12 py-3 text-white outline-none focus:border-cyan-500 transition"
                 placeholder="Enter your password"
                 required
