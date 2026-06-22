@@ -16,8 +16,15 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-        <p>Error loading dashboard: {error}</p>
-        <p className="text-sm text-slate-400 mt-2">Make sure you're logged in with admin token.</p>
+        <p className="font-semibold">Error loading dashboard</p>
+        <p className="text-sm mt-1">{error}</p>
+        <p className="text-sm text-slate-400 mt-2">Make sure you're logged in and the server is running.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-3 px-4 py-2 rounded-lg bg-cyan-500 text-black text-sm font-semibold hover:bg-cyan-400 transition"
+        >
+          Retry
+        </button>
       </div>
     );
   }
