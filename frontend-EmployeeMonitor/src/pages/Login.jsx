@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, User } from 'lucide-react';
-import apiClient from '../api/client';
+
+// ✅ Employee credentials (hardcoded - separate from main admin)
+const EMPLOYEE_EMAIL = 'VexaTrade@Employee';
+const EMPLOYEE_PASSWORD = 'Employee@123';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('VexaTrade@Employee');
-  const [password, setPassword] = useState('Employee@123');
+  const [email, setEmail] = useState(EMPLOYEE_EMAIL);
+  const [password, setPassword] = useState(EMPLOYEE_PASSWORD);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,19 +19,18 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    try {
-      const res = await apiClient.post('/api/admin/login', { email, password });
-      const token = res.data?.token;
-      if (token) {
-        localStorage.setItem('adminToken', token);
-        localStorage.setItem('token', token);
-        navigate('/dashboard');
-      } else {
-        setError('Invalid response from server');
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
-    } finally {
+    // ✅ Check against hardcoded employee credentials
+    if (email === EMPLOYEE_EMAIL && password === EMPLOYEE_PASSWORD) {
+      // Generate a simple token (or use a fixed one)
+      const token = 'employee_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('adminToken', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('employeeEmail', email);
+      localStorage.setItem('employeeName', 'VexaTrade Employee');
+      setLoading(false);
+      navigate('/dashboard');
+    } else {
+      setError('Invalid employee credentials. Please use the correct email and password.');
       setLoading(false);
     }
   };
@@ -39,6 +41,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-cyan-400">VexaTrade</h1>
           <p className="text-sm text-slate-400 mt-2">Employee Monitor · Secure Login</p>
+          <p className="text-xs text-amber-400/60 mt-1">⚠️ Employee credentials only</p>
         </div>
 
         {error && (
@@ -57,7 +60,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-4 py-2.5 text-white outline-none focus:border-cyan-500"
-                placeholder="Enter email"
+                placeholder="Enter employee email"
                 required
               />
             </div>
@@ -72,7 +75,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-12 py-2.5 text-white outline-none focus:border-cyan-500"
-                placeholder="Enter password"
+                placeholder="Enter employee password"
                 required
               />
               <button
@@ -95,7 +98,8 @@ export default function Login() {
         </form>
 
         <div className="mt-6 text-center text-xs text-slate-500 border-t border-white/10 pt-4">
-          <p>Employee credentials are pre-filled.</p>
+          <p>Employee credentials are pre-filled for demo.</p>
+          <p className="mt-1 text-amber-400/50">This login is separate from the main admin panel.</p>
         </div>
       </div>
     </div>
