@@ -35,4 +35,23 @@ export default function TradesTab({ userId }) {
         </thead>
         <tbody>
           {trades.length === 0 ? (
-            <tr><td colSpan="6" className="px-4 py-6 text-center text-slate-500">No trades
+            <tr><td colSpan="6" className="px-4 py-6 text-center text-slate-500">No trades.</td></tr>
+          ) : (
+            trades.map((trade) => (
+              <tr key={trade.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
+                <td className="px-4 py-3 text-white">{trade.pair || '—'}</td>
+                <td className="px-4 py-3 text-white capitalize">{trade.direction || '—'}</td>
+                <td className="px-4 py-3 text-white">{trade.amount}</td>
+                <td className={`px-4 py-3 ${Number(trade.profit || 0) >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                  {trade.profit ? (Number(trade.profit) >= 0 ? '+' : '') + trade.profit : '—'}
+                </td>
+                <td className="px-4 py-3"><StatusBadge status={trade.status || trade.result} /></td>
+                <td className="px-4 py-3 text-slate-400 text-xs">{new Date(trade.created_at).toLocaleString()}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
