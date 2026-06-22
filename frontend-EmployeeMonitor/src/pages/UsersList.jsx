@@ -9,34 +9,18 @@ export default function UsersList() {
   const { data: users, loading, error } = useEmployeeData('/api/admin/users');
   const [search, setSearch] = useState('');
 
-  // Safe filtering
   const filteredUsers = Array.isArray(users)
     ? users.filter(u => {
-        const name = u?.name || '';
-        const email = u?.email || '';
-        const uid = u?.uid || '';
-        const term = search || '';
-        return name.toLowerCase().includes(term.toLowerCase()) ||
-               email.toLowerCase().includes(term.toLowerCase()) ||
-               uid.toLowerCase().includes(term.toLowerCase());
+        const name = (u?.name || '').toLowerCase();
+        const email = (u?.email || '').toLowerCase();
+        const uid = (u?.uid || '').toLowerCase();
+        const term = (search || '').toLowerCase();
+        return name.includes(term) || email.includes(term) || uid.includes(term);
       })
     : [];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-slate-400 animate-pulse">Loading users...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-        Error loading users: {error}
-      </div>
-    );
-  }
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-slate-400 animate-pulse">Loading users...</div></div>;
+  if (error) return <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">Error loading users: {error}</div>;
 
   return (
     <div>
@@ -63,10 +47,7 @@ export default function UsersList() {
       ) : (
         <div className="space-y-3">
           {filteredUsers.map((user) => (
-            <div
-              key={user?.id || Math.random()}
-              className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 hover:border-white/20 transition"
-            >
+            <div key={user?.id || Math.random()} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 hover:border-white/20 transition">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
