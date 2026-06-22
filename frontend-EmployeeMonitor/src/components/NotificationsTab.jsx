@@ -1,8 +1,7 @@
-import { useEmployeeData } from '../../hooks/useEmployeeData';
+import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
 
 export default function NotificationsTab({ userId }) {
-  // Get all admin notifications (aggregated) - filter by user if needed
   const { data: notifications, loading, error } = useEmployeeData('/api/admin/notifications');
 
   if (loading) {
