@@ -67,13 +67,14 @@ export default function Sidebar({ isOpen, onClose }) {
               onClick={() => {
                 if (window.innerWidth < 1024) onClose();
               }}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={({ isActive }) => {
+                // ✅ isActive is properly defined here
+                return `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                   isActive
                     ? 'bg-cyan-500/20 text-cyan-400'
                     : 'text-slate-300 hover:bg-white/5'
-                }`
-              }
+                }`;
+              }}
             >
               <item.icon size={18} className="shrink-0" />
               <span className="truncate">{item.label}</span>
