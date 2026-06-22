@@ -9,12 +9,17 @@ export default function UsersList() {
   const { data: users, loading, error } = useEmployeeData('/api/admin/users');
   const [search, setSearch] = useState('');
 
+  // Safe filtering
   const filteredUsers = Array.isArray(users)
-    ? users.filter(u =>
-        u.name?.toLowerCase().includes(search.toLowerCase()) ||
-        u.email?.toLowerCase().includes(search.toLowerCase()) ||
-        u.uid?.toLowerCase().includes(search.toLowerCase())
-      )
+    ? users.filter(u => {
+        const name = u?.name || '';
+        const email = u?.email || '';
+        const uid = u?.uid || '';
+        const term = search || '';
+        return name.toLowerCase().includes(term.toLowerCase()) ||
+               email.toLowerCase().includes(term.toLowerCase()) ||
+               uid.toLowerCase().includes(term.toLowerCase());
+      })
     : [];
 
   if (loading) {
@@ -43,7 +48,7 @@ export default function UsersList() {
             type="text"
             placeholder="Search users..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value || '')}
             className="w-full sm:w-56 rounded-xl border border-white/10 bg-[#0a0e1a] pl-9 pr-3 py-2 text-sm text-white outline-none focus:border-cyan-500"
           />
         </div>
@@ -59,23 +64,23 @@ export default function UsersList() {
         <div className="space-y-3">
           {filteredUsers.map((user) => (
             <div
-              key={user.id}
+              key={user?.id || Math.random()}
               className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 hover:border-white/20 transition"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-white truncate">{user.name || '—'}</span>
-                    <StatusBadge status={user.status || 'Active'} />
+                    <span className="text-sm font-semibold text-white truncate">{user?.name || '—'}</span>
+                    <StatusBadge status={user?.status || 'Active'} />
                   </div>
                   <div className="mt-1 text-xs text-slate-400">
-                    <span className="font-mono">{user.uid || '—'}</span>
+                    <span className="font-mono">{user?.uid || '—'}</span>
                     <span className="mx-2">•</span>
-                    <span className="truncate">{user.email || '—'}</span>
+                    <span className="truncate">{user?.email || '—'}</span>
                   </div>
                 </div>
                 <button
-                  onClick={() => navigate(`/users/${user.id}`)}
+                  onClick={() => navigate(`/users/${user?.id}`)}
                   className="shrink-0 ml-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
                 >
                   <Eye size={14} className="inline mr-1" /> View
