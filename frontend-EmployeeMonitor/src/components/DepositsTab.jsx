@@ -1,8 +1,7 @@
-import { useEmployeeData } from '../../hooks/useEmployeeData';
+import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
 
 export default function DepositsTab({ userId }) {
-  // Get all deposits and filter by user_id
   const { data: allDeposits, loading, error } = useEmployeeData('/api/admin/deposits');
   
   const deposits = Array.isArray(allDeposits) 
