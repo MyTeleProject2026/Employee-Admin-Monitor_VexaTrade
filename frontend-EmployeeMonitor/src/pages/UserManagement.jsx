@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, UserMinus, Eye, Users, X } from 'lucide-react';
-import { useEmployeeData } from '../hooks/useEmployeeData';
+import { UserPlus, UserMinus, Eye, Users, X, Search } from 'lucide-react';
 import apiClient from '../api/client';
+import StatusBadge from '../components/StatusBadge';
 
 export default function UserManagement() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export default function UserManagement() {
   const [success, setSuccess] = useState('');
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const employeeId = localStorage.getItem('employeeId');
 
@@ -22,12 +23,15 @@ export default function UserManagement() {
 
   const loadAssignedUsers = async () => {
     try {
+      setLoading(true);
       const res = await apiClient.get(`/api/employee/assigned-users/${employeeId}`);
       if (res.data?.success) {
         setAssignedUsers(res.data.data || []);
       }
     } catch (err) {
       console.error('Failed to load assigned users:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,12 +92,20 @@ export default function UserManagement() {
     user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-400 animate-pulse">Loading users...</div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">User Management</h1>
-          <p className="text-sm text-slate-400">Manage users you want to monitor</p>
+          <p className="text-sm text-slate-400">Add/remove users to monitor</p>
         </div>
         <button
           onClick={() => navigate('/users')}
@@ -146,18 +158,21 @@ export default function UserManagement() {
 
       {/* Assigned Users List */}
       <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-b border-white/10 gap-2">
           <h2 className="text-sm font-semibold text-white flex items-center gap-2">
             <Users size={18} className="text-cyan-400" />
             Monitored Users ({assignedUsers.length})
           </h2>
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="rounded-lg border border-white/10 bg-[#050812] px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-40 sm:w-48"
-          />
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full sm:w-48 rounded-lg border border-white/10 bg-[#050812] pl-8 pr-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500"
+            />
+          </div>
         </div>
 
         {assignedUsers.length === 0 ? (
@@ -167,45 +182,34 @@ export default function UserManagement() {
             <p className="text-xs mt-1">Add a user UID above to start monitoring</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-white/10 bg-[#050812]">
-                <tr>
-                  <th className="px-4 py-2.5 text-left text-slate-400 font-medium">#</th>
-                  <th className="px-4 py-2.5 text-left text-slate-400 font-medium">UID</th>
-                  <th className="px-4 py-2.5 text-left text-slate-400 font-medium">Name</th>
-                  <th className="px-4 py-2.5 text-left text-slate-400 font-medium">Email</th>
-                  <th className="px-4 py-2.5 text-left text-slate-400 font-medium">Status</th>
-                  <th className="px-4 py-2.5 text-right text-slate-400 font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user, index) => (
-                  <tr key={user.id || user.uid} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-                    <td className="px-4 py-2.5 text-slate-400">{index + 1}</td>
-                    <td className="px-4 py-2.5 text-white font-mono text-xs">{user.uid}</td>
-                    <td className="px-4 py-2.5 text-white">{user.name || '—'}</td>
-                    <td className="px-4 py-2.5 text-slate-300">{user.email || '—'}</td>
-                    <td className="px-4 py-2.5">
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${
-                        user.status === 'active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
-                      }`}>
-                        {user.status || 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5 text-right">
-                      <button
-                        onClick={() => handleRemoveUser(user.uid)}
-                        disabled={removing === user.uid}
-                        className="inline-flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/20 transition disabled:opacity-50"
-                      >
-                        <UserMinus size={12} /> Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="divide-y divide-white/5">
+            {filteredUsers.map((user, index) => (
+              <div key={user.id || user.uid} className="p-4 hover:bg-white/5 transition">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold text-white">{user.name || '—'}</span>
+                      <StatusBadge status={user.status || 'Unknown'} />
+                    </div>
+                    <div className="mt-1 text-xs text-slate-400">
+                      <span className="font-mono">{user.uid}</span>
+                      <span className="mx-2">•</span>
+                      <span className="truncate">{user.email || '—'}</span>
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      Added: {new Date(user.added_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveUser(user.uid)}
+                    disabled={removing === user.uid}
+                    className="shrink-0 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/20 transition disabled:opacity-50"
+                  >
+                    <UserMinus size={14} className="inline mr-1" /> Remove
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
