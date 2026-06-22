@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, User, Shield } from 'lucide-react';
-
-// ✅ Employee credentials (hardcoded - separate from main admin)
-const EMPLOYEE_EMAIL = 'VexaTrade@Employee';
-const EMPLOYEE_PASSWORD = 'Employee@123';
+import apiClient from '../api/client';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [employeeName, setEmployeeName] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,6 +18,8 @@ export default function Login() {
     localStorage.removeItem('employeeEmail');
     localStorage.removeItem('employeeName');
     localStorage.removeItem('employeeSession');
+    localStorage.removeItem('employeeId');
+    localStorage.removeItem('assignedUsers');
   }, []);
 
   const handleSubmit = async (e) => {
@@ -28,21 +27,35 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    // ✅ Check against hardcoded employee credentials
-    if (email.trim() === EMPLOYEE_EMAIL && password === EMPLOYEE_PASSWORD) {
-      const token = 'emp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('adminToken', token);
-      localStorage.setItem('token', token);
-      localStorage.setItem('employeeEmail', email);
-      localStorage.setItem('employeeName', 'VexaTrade Employee');
-      localStorage.setItem('employeeSession', Date.now().toString());
+    const name = employeeName.trim();
+    if (!name) {
+      setError('Please enter your employee name');
       setLoading(false);
-      navigate('/dashboard');
-    } else {
-      setError('Invalid employee credentials. Please use the correct email and password.');
+      return;
+    }
+
+    const email = `${name}@VexaTrade`;
+
+    try {
+      const res = await apiClient.post('/api/employee/login', {
+        email: email,
+        password: password,
+      });
+
+      if (res.data?.success) {
+        const data = res.data.data;
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('employeeEmail', data.email);
+        localStorage.setItem('employeeName', data.employee_name);
+        localStorage.setItem('employeeId', data.id);
+        localStorage.setItem('assignedUsers', JSON.stringify(data.assigned_users || []));
+        localStorage.setItem('employeeSession', Date.now().toString());
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
@@ -58,7 +71,6 @@ export default function Login() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-cyan-400">VexaTrade</h1>
           <p className="text-sm text-slate-400 mt-2">Employee Monitor · Secure Login</p>
-          <p className="text-xs text-amber-400/60 mt-1">⚠️ Employee credentials only</p>
         </div>
 
         {error && (
@@ -69,18 +81,21 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Employee Name</label>
             <div className="relative">
               <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={employeeName}
+                onChange={(e) => setEmployeeName(e.target.value)}
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-4 py-3 text-white outline-none focus:border-cyan-500 transition"
-                placeholder="Enter employee email"
+                placeholder="Enter your name (e.g., John)"
                 required
               />
             </div>
+            <p className="text-xs text-slate-500 mt-1">
+              Will login as: <span className="text-cyan-400">{employeeName || 'YourName'}@VexaTrade</span>
+            </p>
           </div>
 
           <div>
@@ -92,7 +107,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-12 py-3 text-white outline-none focus:border-cyan-500 transition"
-                placeholder="Enter employee password"
+                placeholder="Enter your password"
                 required
               />
               <button
@@ -115,8 +130,17 @@ export default function Login() {
         </form>
 
         <div className="mt-6 text-center text-xs text-slate-500 border-t border-white/10 pt-4">
-          <p className="text-amber-400/50">🔐 Employee credentials required</p>
-          <p className="mt-1 text-slate-600">Session expires when you close the browser</p>
+          <p>
+            Don't have an account?{' '}
+            <button
+              type="button"
+              onClick={() => navigate('/register')}
+              className="text-cyan-400 hover:text-cyan-300 transition"
+            >
+              Register here
+            </button>
+          </p>
+          <p className="mt-1 text-amber-400/50">🔐 Employee credentials required</p>
         </div>
       </div>
     </div>
