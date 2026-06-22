@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Wallet, ArrowUpCircle, TrendingUp, Landmark, Bell } from 'lucide-react';
 import { useEmployeeData } from '../hooks/useEmployeeData';
-import StatusBadge from './components/StatusBadge';
-import UserOverview from './components/UserOverview';
-import DepositsTab from './components/DepositsTab';
-import WithdrawalsTab from './components/WithdrawalsTab';
-import TradesTab from './components/TradesTab';
-import FundsTab from './components/FundsTab';
-import NotificationsTab from './components/NotificationsTab';
+import StatusBadge from '../components/StatusBadge';
+import UserOverview from '../components/UserOverview';
+import DepositsTab from '../components/DepositsTab';
+import WithdrawalsTab from '../components/WithdrawalsTab';
+import TradesTab from '../components/TradesTab';
+import FundsTab from '../components/FundsTab';
+import NotificationsTab from '../components/NotificationsTab';
 
 const tabs = [
   { key: 'overview', label: 'Overview', icon: User },
