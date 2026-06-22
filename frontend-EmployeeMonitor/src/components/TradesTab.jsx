@@ -1,5 +1,6 @@
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
+import { safeTrim } from '../utils/helpers';
 
 export default function TradesTab({ userId }) {
   const { data: allTrades, loading, error } = useEmployeeData('/api/admin/trades');
@@ -8,18 +9,8 @@ export default function TradesTab({ userId }) {
     ? allTrades.filter(t => t.user_id === parseInt(userId))
     : [];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-32">
-        <div className="text-slate-400 animate-pulse">Loading trades...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div className="text-red-400">Error loading trades: {error}</div>;
-  }
-
+  if (loading) return <div className="flex items-center justify-center h-32"><div className="text-slate-400 animate-pulse">Loading trades...</div></div>;
+  if (error) return <div className="text-red-400">Error loading trades: {error}</div>;
   if (trades.length === 0) {
     return (
       <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
@@ -37,8 +28,8 @@ export default function TradesTab({ userId }) {
           <div key={trade.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-white">{trade.pair || '—'}</span>
-                <span className="text-xs text-slate-400 capitalize">{trade.direction || '—'}</span>
+                <span className="text-sm font-semibold text-white">{safeTrim(trade.pair) || '—'}</span>
+                <span className="text-xs text-slate-400 capitalize">{safeTrim(trade.direction) || '—'}</span>
               </div>
               <StatusBadge status={trade.status || trade.result} />
             </div>
