@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, User, Shield, UserPlus } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff, Lock, User, UserPlus } from 'lucide-react';
 import apiClient from '../api/client';
 
 export default function Register() {
@@ -22,6 +22,11 @@ export default function Register() {
     const name = employeeName.trim();
     if (!name) {
       setError('Employee name is required');
+      return;
+    }
+
+    if (name.length < 2) {
+      setError('Employee name must be at least 2 characters');
       return;
     }
 
@@ -47,9 +52,12 @@ export default function Register() {
 
       if (res.data?.success) {
         setSuccess(`Registration successful! Your email is ${email}`);
-        setTimeout(() => navigate('/login'), 2000);
+        setTimeout(() => navigate('/login'), 2500);
+      } else {
+        setError(res.data?.message || 'Registration failed. Please try again.');
       }
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
@@ -67,6 +75,7 @@ export default function Register() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-cyan-400">VexaTrade</h1>
           <p className="text-sm text-slate-400 mt-2">Employee Registration</p>
+          <p className="text-xs text-amber-400/60 mt-1">🔐 Create your employee account</p>
         </div>
 
         {error && (
@@ -93,6 +102,7 @@ export default function Register() {
                 className="w-full rounded-xl border border-white/10 bg-[#050812] pl-10 pr-4 py-3 text-white outline-none focus:border-cyan-500 transition"
                 placeholder="Enter your name (e.g., John)"
                 required
+                autoFocus
               />
             </div>
             <p className="text-xs text-slate-500 mt-1">
@@ -121,6 +131,7 @@ export default function Register() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            <p className="text-xs text-slate-500 mt-1">Minimum 6 characters</p>
           </div>
 
           <div>
@@ -150,21 +161,28 @@ export default function Register() {
             disabled={loading}
             className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:opacity-60"
           >
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Registering...
+              </span>
+            ) : (
+              'Register'
+            )}
           </button>
         </form>
 
         <div className="mt-6 text-center text-xs text-slate-500 border-t border-white/10 pt-4">
           <p>
             Already have an account?{' '}
-            <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="text-cyan-400 hover:text-cyan-300 transition"
-            >
+            <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition">
               Login here
-            </button>
+            </Link>
           </p>
+          <p className="mt-2 text-amber-400/50">🔐 Employee credentials are separate from admin panel</p>
         </div>
       </div>
     </div>
