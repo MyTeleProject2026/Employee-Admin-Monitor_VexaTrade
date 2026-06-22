@@ -17,9 +17,12 @@ export default function Layout({ children }) {
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('token');
+    localStorage.removeItem('employeeToken');
     localStorage.removeItem('employeeEmail');
     localStorage.removeItem('employeeName');
     localStorage.removeItem('employeeSession');
+    localStorage.removeItem('employeeId');
+    localStorage.removeItem('assignedUsers');
     navigate('/login');
   };
 
@@ -33,7 +36,7 @@ export default function Layout({ children }) {
           <button onClick={() => setSidebarOpen(true)} className="text-white p-1">
             <Menu size={24} />
           </button>
-          <span className="text-base font-bold text-cyan-400">VexaTrade Monitor</span>
+          <span className="text-base font-bold text-cyan-400 truncate max-w-[140px]">VexaTrade Monitor</span>
           <button onClick={handleLogout} className="text-slate-400 hover:text-white p-1">
             <LogOut size={20} />
           </button>
