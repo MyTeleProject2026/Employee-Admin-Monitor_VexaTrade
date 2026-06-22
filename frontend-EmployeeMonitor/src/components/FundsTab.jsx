@@ -2,10 +2,24 @@ import { useEmployeeData } from '../../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
 
 export default function FundsTab({ userId }) {
-  const { data: funds, loading } = useEmployeeData(`/admin/funds?user_id=${userId}`);
+  const { data: allFunds, loading, error } = useEmployeeData('/api/admin/funds');
   
-  if (loading) return <div className="text-slate-400">Loading funds...</div>;
-  
+  const funds = Array.isArray(allFunds) 
+    ? allFunds.filter(f => f.user_id === parseInt(userId))
+    : [];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <div className="text-slate-400 animate-pulse">Loading funds...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-400">Error loading funds: {error}</div>;
+  }
+
   return (
     <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-x-auto">
       <table className="w-full text-sm">
@@ -20,10 +34,10 @@ export default function FundsTab({ userId }) {
           </tr>
         </thead>
         <tbody>
-          {funds?.length === 0 ? (
+          {funds.length === 0 ? (
             <tr><td colSpan="6" className="px-4 py-6 text-center text-slate-500">No fund applications.</td></tr>
           ) : (
-            funds?.map((fund) => (
+            funds.map((fund) => (
               <tr key={fund.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
                 <td className="px-4 py-3 text-white">{fund.plan_name || '—'}</td>
                 <td className="px-4 py-3 text-white">{fund.locked_principal}</td>
