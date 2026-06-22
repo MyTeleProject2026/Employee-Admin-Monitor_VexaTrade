@@ -1,6 +1,5 @@
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
-import { safeTrim } from '../utils/helpers';
 
 export default function NotificationsTab({ userId }) {
   const { data: notifications, loading, error } = useEmployeeData('/api/admin/notifications');
@@ -26,10 +25,10 @@ export default function NotificationsTab({ userId }) {
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-white truncate">{safeTrim(notif.title) || '—'}</span>
+                <span className="text-sm font-semibold text-white truncate">{typeof notif.title === 'string' ? notif.title : '—'}</span>
                 <StatusBadge status={notif.is_read ? 'Read' : 'Unread'} />
               </div>
-              <p className="mt-1 text-sm text-slate-300 break-words">{safeTrim(notif.message) || '—'}</p>
+              <p className="mt-1 text-sm text-slate-300 break-words">{typeof notif.message === 'string' ? notif.message : '—'}</p>
               <p className="mt-1 text-xs text-slate-500">{new Date(notif.created_at).toLocaleString()}</p>
             </div>
           </div>
