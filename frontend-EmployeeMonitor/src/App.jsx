@@ -4,7 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import UsersList from './pages/UsersList';
-import UserDetail from './pages/UserDetail';
+import UserDetail from './pages/UserDetail';  // ✅ This must be imported
 import DepositsList from './pages/DepositsList';
 import WithdrawalsList from './pages/WithdrawalsList';
 import TradesList from './pages/TradesList';
@@ -27,7 +27,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/users" element={<UsersList />} />
-                <Route path="/users/:userId" element={<UserDetail />} />
+                <Route path="/users/:userId" element={<UserDetail />} />  {/* ✅ This must exist */}
                 <Route path="/deposits" element={<DepositsList />} />
                 <Route path="/withdrawals" element={<WithdrawalsList />} />
                 <Route path="/trades" element={<TradesList />} />
