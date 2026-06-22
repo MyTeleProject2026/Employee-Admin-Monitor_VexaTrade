@@ -27,15 +27,16 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401) {
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('token');
-      localStorage.removeItem('employeeToken');
-      localStorage.removeItem('employeeEmail');
-      localStorage.removeItem('employeeName');
-      localStorage.removeItem('employeeSession');
-      localStorage.removeItem('employeeId');
-      localStorage.removeItem('assignedUsers');
-      
+      try {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('token');
+        localStorage.removeItem('employeeToken');
+        localStorage.removeItem('employeeEmail');
+        localStorage.removeItem('employeeName');
+        localStorage.removeItem('employeeSession');
+        localStorage.removeItem('employeeId');
+        localStorage.removeItem('assignedUsers');
+      } catch (e) { /* ignore */ }
       if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
         window.location.href = '/login';
       }
