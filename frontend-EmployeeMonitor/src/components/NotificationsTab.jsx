@@ -18,32 +18,31 @@ export default function NotificationsTab({ userId }) {
 
   const items = Array.isArray(notifications) ? notifications : [];
 
+  if (items.length === 0) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
+        <div className="text-4xl mb-3">🔔</div>
+        <p>No notifications found</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="border-b border-white/10 bg-[#050812]">
-          <tr>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Title</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Message</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Status</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.length === 0 ? (
-            <tr><td colSpan="4" className="px-4 py-6 text-center text-slate-500">No notifications.</td></tr>
-          ) : (
-            items.map((notif, index) => (
-              <tr key={notif.id || index} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-                <td className="px-4 py-3 text-white">{notif.title || '—'}</td>
-                <td className="px-4 py-3 text-slate-300 max-w-xs truncate">{notif.message || '—'}</td>
-                <td className="px-4 py-3"><StatusBadge status={notif.is_read ? 'Read' : 'Unread'} /></td>
-                <td className="px-4 py-3 text-slate-400 text-xs">{new Date(notif.created_at).toLocaleString()}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+    <div className="space-y-3">
+      {items.map((notif, index) => (
+        <div key={notif.id || index} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-semibold text-white truncate">{notif.title || '—'}</span>
+                <StatusBadge status={notif.is_read ? 'Read' : 'Unread'} />
+              </div>
+              <p className="mt-1 text-sm text-slate-300 break-words">{notif.message || '—'}</p>
+              <p className="mt-1 text-xs text-slate-500">{new Date(notif.created_at).toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
