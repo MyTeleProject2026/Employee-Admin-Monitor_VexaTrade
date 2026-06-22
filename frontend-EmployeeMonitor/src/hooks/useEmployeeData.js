@@ -11,42 +11,25 @@ export function useEmployeeData(endpoint, dependencies = []) {
       try {
         setLoading(true);
         setError(null);
-        
         let employeeEndpoint = endpoint;
         if (endpoint.startsWith('/api/admin')) {
           employeeEndpoint = endpoint.replace('/api/admin', '/api/employee');
         }
-        
         console.log(`[useEmployeeData] Fetching: ${employeeEndpoint}`);
-        
         const res = await apiClient.get(employeeEndpoint);
-        
-        // ✅ Safe data extraction
-        let responseData = null;
-        if (res.data) {
-          if (res.data.data !== undefined) {
-            responseData = res.data.data;
-          } else {
-            responseData = res.data;
-          }
-        }
-        
-        // ✅ If responseData is null or undefined, set to empty array/object
+        let responseData = res.data?.data !== undefined ? res.data.data : res.data;
         if (responseData === null || responseData === undefined) {
           responseData = Array.isArray(responseData) ? [] : {};
         }
-        
-        console.log(`[useEmployeeData] Data received:`, responseData);
         setData(responseData);
       } catch (err) {
-        console.error(`[useEmployeeData] Error fetching ${endpoint}:`, err);
+        console.error(`[useEmployeeData] Error:`, err);
         setError(err.response?.data?.message || err.message || 'Failed to load data');
         setData(null);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [endpoint, ...dependencies]);
 
