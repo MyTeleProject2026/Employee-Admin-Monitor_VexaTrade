@@ -26,27 +26,10 @@ export default function UserDetail() {
 
   const { data: user, loading, error } = useEmployeeData(`/api/admin/users/${userId}`);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-slate-400 animate-pulse">Loading user details...</div>
-      </div>
-    );
-  }
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-slate-400 animate-pulse">Loading user details...</div></div>;
+  if (error) return <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">Error loading user: {error}</div>;
+  if (!user) return <div className="text-red-400">User not found.</div>;
 
-  if (error) {
-    return (
-      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
-        Error loading user: {error}
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <div className="text-red-400">User not found.</div>;
-  }
-
-  // Safe data access
   const userName = user?.name || 'Unnamed User';
   const userUid = user?.uid || '—';
   const userEmail = user?.email || '—';
@@ -55,13 +38,9 @@ export default function UserDetail() {
 
   return (
     <div>
-      <button
-        onClick={() => navigate('/users')}
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-4 transition"
-      >
+      <button onClick={() => navigate('/users')} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-4 transition">
         <ArrowLeft size={16} /> Back to Users
       </button>
-
       <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 mb-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
@@ -80,27 +59,18 @@ export default function UserDetail() {
           </div>
         </div>
       </div>
-
       <div className="flex overflow-x-auto gap-1 border-b border-white/10 mb-4 pb-0.5">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`
-              flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap
-              border-b-2 transition
-              ${activeTab === tab.key
-                ? 'border-cyan-400 text-cyan-400'
-                : 'border-transparent text-slate-400 hover:text-white'
-              }
-            `}
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition ${activeTab === tab.key ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-white'}`}
           >
             <tab.icon size={15} className="sm:size-16" />
             <span>{tab.label}</span>
           </button>
         ))}
       </div>
-
       <div>
         {activeTab === 'overview' && <UserOverview user={user} />}
         {activeTab === 'deposits' && <DepositsTab userId={userId} />}
