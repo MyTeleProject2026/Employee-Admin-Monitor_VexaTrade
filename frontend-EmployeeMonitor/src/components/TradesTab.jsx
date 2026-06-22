@@ -1,13 +1,9 @@
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
-import { safeTrim } from '../utils/helpers';
 
 export default function TradesTab({ userId }) {
   const { data: allTrades, loading, error } = useEmployeeData('/api/admin/trades');
-  
-  const trades = Array.isArray(allTrades) 
-    ? allTrades.filter(t => t.user_id === parseInt(userId))
-    : [];
+  const trades = Array.isArray(allTrades) ? allTrades.filter(t => t.user_id === parseInt(userId)) : [];
 
   if (loading) return <div className="flex items-center justify-center h-32"><div className="text-slate-400 animate-pulse">Loading trades...</div></div>;
   if (error) return <div className="text-red-400">Error loading trades: {error}</div>;
@@ -28,15 +24,13 @@ export default function TradesTab({ userId }) {
           <div key={trade.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-white">{safeTrim(trade.pair) || '—'}</span>
-                <span className="text-xs text-slate-400 capitalize">{safeTrim(trade.direction) || '—'}</span>
+                <span className="text-sm font-semibold text-white">{typeof trade.pair === 'string' ? trade.pair : '—'}</span>
+                <span className="text-xs text-slate-400 capitalize">{typeof trade.direction === 'string' ? trade.direction : '—'}</span>
               </div>
               <StatusBadge status={trade.status || trade.result} />
             </div>
             <div className="grid grid-cols-2 gap-1 text-xs">
-              <div>
-                <span className="text-slate-500">Amount:</span> <span className="text-white">{trade.amount}</span>
-              </div>
+              <div><span className="text-slate-500">Amount:</span> <span className="text-white">{trade.amount}</span></div>
               <div>
                 <span className="text-slate-500">Profit/Loss:</span>{' '}
                 <span className={profit >= 0 ? 'text-emerald-300' : 'text-red-300'}>
@@ -44,8 +38,7 @@ export default function TradesTab({ userId }) {
                 </span>
               </div>
               <div className="col-span-2">
-                <span className="text-slate-500">Date:</span>{' '}
-                <span className="text-white">{new Date(trade.created_at).toLocaleString()}</span>
+                <span className="text-slate-500">Date:</span> {new Date(trade.created_at).toLocaleString()}
               </div>
             </div>
           </div>
