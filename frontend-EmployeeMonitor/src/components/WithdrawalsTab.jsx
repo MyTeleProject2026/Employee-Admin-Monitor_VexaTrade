@@ -20,34 +20,36 @@ export default function WithdrawalsTab({ userId }) {
     return <div className="text-red-400">Error loading withdrawals: {error}</div>;
   }
 
+  if (withdrawals.length === 0) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
+        <div className="text-4xl mb-3">💳</div>
+        <p>No withdrawals found</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="border-b border-white/10 bg-[#050812]">
-          <tr>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Coin</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Amount</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Address</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Status</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {withdrawals.length === 0 ? (
-            <tr><td colSpan="5" className="px-4 py-6 text-center text-slate-500">No withdrawals.</td></tr>
-          ) : (
-            withdrawals.map((wd) => (
-              <tr key={wd.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-                <td className="px-4 py-3 text-white">{wd.coin || 'USDT'}</td>
-                <td className="px-4 py-3 text-white">{wd.amount}</td>
-                <td className="px-4 py-3 text-slate-300 truncate max-w-[120px]">{wd.address || '—'}</td>
-                <td className="px-4 py-3"><StatusBadge status={wd.status} /></td>
-                <td className="px-4 py-3 text-slate-400 text-xs">{new Date(wd.created_at).toLocaleString()}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+    <div className="space-y-3">
+      {withdrawals.map((wd) => (
+        <div key={wd.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-white">{wd.coin || 'USDT'}</span>
+              <StatusBadge status={wd.status} />
+            </div>
+            <span className="text-sm font-bold text-white">{wd.amount}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1 text-xs text-slate-400">
+            <div className="col-span-2 truncate">
+              <span className="text-slate-500">Address:</span> {wd.address || '—'}
+            </div>
+            <div className="col-span-2">
+              <span className="text-slate-500">Date:</span> {new Date(wd.created_at).toLocaleString()}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
