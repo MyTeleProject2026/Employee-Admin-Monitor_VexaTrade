@@ -5,7 +5,7 @@ import BottomNav from './BottomNav';
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+
   return (
     <div className="min-h-screen bg-[#050812] text-white flex">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
