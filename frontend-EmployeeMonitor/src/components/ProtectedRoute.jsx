@@ -7,12 +7,9 @@ export default function ProtectedRoute({ children }) {
                   localStorage.getItem('token');
     const session = localStorage.getItem('employeeSession');
     const employeeId = localStorage.getItem('employeeId');
-
-    // Check if token exists and session is valid (less than 24 hours old)
     const isValid = token && session && employeeId && (Date.now() - parseInt(session) < 24 * 60 * 60 * 1000);
 
     if (!isValid) {
-      // Clear invalid session
       localStorage.removeItem('adminToken');
       localStorage.removeItem('token');
       localStorage.removeItem('employeeToken');
@@ -23,7 +20,6 @@ export default function ProtectedRoute({ children }) {
       localStorage.removeItem('assignedUsers');
       return <Navigate to="/login" replace />;
     }
-
     return children;
   } catch (error) {
     console.error('ProtectedRoute error:', error);
