@@ -11,16 +11,19 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Clear any existing session on mount
   useEffect(() => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('token');
-    localStorage.removeItem('employeeToken');
-    localStorage.removeItem('employeeEmail');
-    localStorage.removeItem('employeeName');
-    localStorage.removeItem('employeeSession');
-    localStorage.removeItem('employeeId');
-    localStorage.removeItem('assignedUsers');
+    try {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('employeeToken');
+      localStorage.removeItem('employeeEmail');
+      localStorage.removeItem('employeeName');
+      localStorage.removeItem('employeeSession');
+      localStorage.removeItem('employeeId');
+      localStorage.removeItem('assignedUsers');
+    } catch (e) {
+      console.log('Clear storage error:', e);
+    }
   }, []);
 
   const handleSubmit = async (e) => {
@@ -28,25 +31,24 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    // ✅ Safe trim check
-    const name = employeeName ? employeeName.trim() : '';
-    if (!name) {
-      setError('Please enter your employee name');
-      setLoading(false);
-      return;
-    }
-
-    // ✅ Safe trim check
-    const pass = password ? password.trim() : '';
-    if (!pass) {
-      setError('Please enter your password');
-      setLoading(false);
-      return;
-    }
-
-    const email = `${name}@VexaTrade`;
-
     try {
+      // Safe trim - check if it's a string first
+      const name = typeof employeeName === 'string' ? employeeName.trim() : '';
+      if (!name) {
+        setError('Please enter your employee name');
+        setLoading(false);
+        return;
+      }
+
+      const pass = typeof password === 'string' ? password.trim() : '';
+      if (!pass) {
+        setError('Please enter your password');
+        setLoading(false);
+        return;
+      }
+
+      const email = `${name}@VexaTrade`;
+
       const res = await apiClient.post('/api/employee/login', {
         email: email,
         password: pass,
@@ -154,7 +156,6 @@ export default function Login() {
             </Link>
           </p>
           <p className="mt-2 text-amber-400/50">🔐 Employee credentials are separate from admin panel</p>
-          <p className="mt-1 text-slate-600">Session expires after 24 hours or when browser closes</p>
         </div>
       </div>
     </div>
