@@ -25,14 +25,18 @@ const navItems = [
 
 export default function Sidebar({ isOpen, onClose }) {
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('token');
-    localStorage.removeItem('employeeToken');
-    localStorage.removeItem('employeeEmail');
-    localStorage.removeItem('employeeName');
-    localStorage.removeItem('employeeSession');
-    localStorage.removeItem('employeeId');
-    localStorage.removeItem('assignedUsers');
+    try {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('employeeToken');
+      localStorage.removeItem('employeeEmail');
+      localStorage.removeItem('employeeName');
+      localStorage.removeItem('employeeSession');
+      localStorage.removeItem('employeeId');
+      localStorage.removeItem('assignedUsers');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     window.location.href = '/login';
   };
 
@@ -68,7 +72,6 @@ export default function Sidebar({ isOpen, onClose }) {
                 if (window.innerWidth < 1024) onClose();
               }}
               className={({ isActive }) => {
-                // ✅ isActive is properly defined here
                 return `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                   isActive
                     ? 'bg-cyan-500/20 text-cyan-400'
