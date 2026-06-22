@@ -1,7 +1,9 @@
 import { Navigate } from 'react-router-dom';
 
 export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+  const token = localStorage.getItem('employeeToken') || 
+                localStorage.getItem('adminToken') || 
+                localStorage.getItem('token');
   const session = localStorage.getItem('employeeSession');
   const employeeId = localStorage.getItem('employeeId');
 
@@ -12,6 +14,7 @@ export default function ProtectedRoute({ children }) {
     // Clear invalid session
     localStorage.removeItem('adminToken');
     localStorage.removeItem('token');
+    localStorage.removeItem('employeeToken');
     localStorage.removeItem('employeeEmail');
     localStorage.removeItem('employeeName');
     localStorage.removeItem('employeeSession');
