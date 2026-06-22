@@ -19,33 +19,32 @@ export default function Register() {
     setError('');
     setSuccess('');
 
-    // Safe trim - check if it's a string first
-    const name = typeof employeeName === 'string' ? employeeName.trim() : '';
-    if (!name) {
-      setError('Employee name is required');
-      return;
-    }
-
-    if (name.length < 2) {
-      setError('Employee name must be at least 2 characters');
-      return;
-    }
-
-    const pass = typeof password === 'string' ? password.trim() : '';
-    if (pass.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
-    const confirmPass = typeof confirmPassword === 'string' ? confirmPassword.trim() : '';
-    if (pass !== confirmPass) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    setLoading(true);
-
     try {
+      const name = typeof employeeName === 'string' ? employeeName.trim() : '';
+      if (!name) {
+        setError('Employee name is required');
+        return;
+      }
+
+      if (name.length < 2) {
+        setError('Employee name must be at least 2 characters');
+        return;
+      }
+
+      const pass = typeof password === 'string' ? password.trim() : '';
+      if (pass.length < 6) {
+        setError('Password must be at least 6 characters');
+        return;
+      }
+
+      const confirmPass = typeof confirmPassword === 'string' ? confirmPassword.trim() : '';
+      if (pass !== confirmPass) {
+        setError('Passwords do not match');
+        return;
+      }
+
+      setLoading(true);
+
       const email = `${name}@VexaTrade`;
       const res = await apiClient.post('/api/employee/register', {
         employee_name: name,
