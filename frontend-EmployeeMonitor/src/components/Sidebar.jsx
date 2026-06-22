@@ -7,13 +7,15 @@ import {
   TrendingUp,
   Landmark,
   Bell,
+  Settings,
   X,
   LogOut,
 } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/users', label: 'Users', icon: Users },
+  { path: '/users', label: 'Monitored Users', icon: Users },
+  { path: '/user-management', label: 'User Management', icon: Settings },
   { path: '/deposits', label: 'Deposits', icon: Wallet },
   { path: '/withdrawals', label: 'Withdrawals', icon: ArrowUpCircle },
   { path: '/trades', label: 'Trades', icon: TrendingUp },
@@ -28,6 +30,8 @@ export default function Sidebar({ isOpen, onClose }) {
     localStorage.removeItem('employeeEmail');
     localStorage.removeItem('employeeName');
     localStorage.removeItem('employeeSession');
+    localStorage.removeItem('employeeId');
+    localStorage.removeItem('assignedUsers');
     window.location.href = '/login';
   };
 
@@ -54,7 +58,7 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
-        <nav className="p-3 space-y-1 overflow-y-auto h-[calc(100%-140px)]">
+        <nav className="p-3 space-y-1 overflow-y-auto h-[calc(100%-160px)]">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
