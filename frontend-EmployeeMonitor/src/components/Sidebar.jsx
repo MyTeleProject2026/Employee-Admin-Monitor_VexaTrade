@@ -27,6 +27,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('token');
+    localStorage.removeItem('employeeToken');
     localStorage.removeItem('employeeEmail');
     localStorage.removeItem('employeeName');
     localStorage.removeItem('employeeSession');
@@ -74,8 +75,8 @@ export default function Sidebar({ isOpen, onClose }) {
                 }`
               }
             >
-              <item.icon size={18} />
-              <span>{item.label}</span>
+              <item.icon size={18} className="shrink-0" />
+              <span className="truncate">{item.label}</span>
             </NavLink>
           ))}
         </nav>
@@ -85,7 +86,7 @@ export default function Sidebar({ isOpen, onClose }) {
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition w-full"
           >
-            <LogOut size={18} />
+            <LogOut size={18} className="shrink-0" />
             <span>Logout</span>
           </button>
           <p className="text-[9px] text-slate-500 mt-2 text-center">Read-only · v1.0</p>
