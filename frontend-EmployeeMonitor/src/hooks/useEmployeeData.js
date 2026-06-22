@@ -10,21 +10,24 @@ export function useEmployeeData(endpoint, dependencies = []) {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setError(null);
         
         // Use employee endpoints instead of admin endpoints
-        // Replace /api/admin with /api/employee
         let employeeEndpoint = endpoint;
         if (endpoint.startsWith('/api/admin')) {
           employeeEndpoint = endpoint.replace('/api/admin', '/api/employee');
         }
         
+        console.log(`[useEmployeeData] Fetching: ${employeeEndpoint}`);
+        
         const res = await apiClient.get(employeeEndpoint);
         const responseData = res.data?.data || res.data;
+        
+        console.log(`[useEmployeeData] Data received:`, responseData);
         setData(responseData);
-        setError(null);
       } catch (err) {
         console.error(`[useEmployeeData] Error fetching ${endpoint}:`, err);
-        setError(err.response?.data?.message || err.message);
+        setError(err.response?.data?.message || err.message || 'Failed to load data');
         setData(null);
       } finally {
         setLoading(false);
