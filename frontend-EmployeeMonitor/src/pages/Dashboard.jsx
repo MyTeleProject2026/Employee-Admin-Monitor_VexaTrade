@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Users, Wallet, TrendingUp, Landmark, Bell } from 'lucide-react';
-import StatsCard from './components/StatsCard';
 import { useEmployeeData } from '../hooks/useEmployeeData';
+import StatsCard from '../components/StatsCard';
+import { Users, Wallet, TrendingUp, Landmark, Bell } from 'lucide-react';
 
 export default function Dashboard() {
   const { data: stats, loading, error } = useEmployeeData('/api/admin/dashboard-stats');
