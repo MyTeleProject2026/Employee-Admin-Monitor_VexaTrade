@@ -10,8 +10,14 @@ export function useEmployeeData(endpoint, dependencies = []) {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
         // Use employee endpoints instead of admin endpoints
-        const employeeEndpoint = endpoint.replace('/api/admin', '/api/employee');
+        // Replace /api/admin with /api/employee
+        let employeeEndpoint = endpoint;
+        if (endpoint.startsWith('/api/admin')) {
+          employeeEndpoint = endpoint.replace('/api/admin', '/api/employee');
+        }
+        
         const res = await apiClient.get(employeeEndpoint);
         const responseData = res.data?.data || res.data;
         setData(responseData);
