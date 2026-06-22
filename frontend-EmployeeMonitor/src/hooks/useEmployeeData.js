@@ -12,7 +12,6 @@ export function useEmployeeData(endpoint, dependencies = []) {
         setLoading(true);
         setError(null);
         
-        // Use employee endpoints instead of admin endpoints
         let employeeEndpoint = endpoint;
         if (endpoint.startsWith('/api/admin')) {
           employeeEndpoint = endpoint.replace('/api/admin', '/api/employee');
@@ -21,7 +20,21 @@ export function useEmployeeData(endpoint, dependencies = []) {
         console.log(`[useEmployeeData] Fetching: ${employeeEndpoint}`);
         
         const res = await apiClient.get(employeeEndpoint);
-        const responseData = res.data?.data || res.data;
+        
+        // ✅ Safe data extraction
+        let responseData = null;
+        if (res.data) {
+          if (res.data.data !== undefined) {
+            responseData = res.data.data;
+          } else {
+            responseData = res.data;
+          }
+        }
+        
+        // ✅ If responseData is null or undefined, set to empty array/object
+        if (responseData === null || responseData === undefined) {
+          responseData = Array.isArray(responseData) ? [] : {};
+        }
         
         console.log(`[useEmployeeData] Data received:`, responseData);
         setData(responseData);
