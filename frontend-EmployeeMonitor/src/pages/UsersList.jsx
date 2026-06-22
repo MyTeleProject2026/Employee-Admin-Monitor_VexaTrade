@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye } from 'lucide-react';
 import { useEmployeeData } from '../hooks/useEmployeeData';
-import StatusBadge from './components/StatusBadge';
+import StatusBadge from '../components/StatusBadge';
 
 export default function UsersList() {
   const navigate = useNavigate();
