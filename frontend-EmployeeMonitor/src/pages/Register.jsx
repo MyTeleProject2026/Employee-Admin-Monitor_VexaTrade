@@ -19,8 +19,8 @@ export default function Register() {
     setError('');
     setSuccess('');
 
-    // ✅ Safe trim check
-    const name = employeeName ? employeeName.trim() : '';
+    // Safe trim - check if it's a string first
+    const name = typeof employeeName === 'string' ? employeeName.trim() : '';
     if (!name) {
       setError('Employee name is required');
       return;
@@ -31,14 +31,14 @@ export default function Register() {
       return;
     }
 
-    // ✅ Safe trim check
-    const pass = password ? password.trim() : '';
+    const pass = typeof password === 'string' ? password.trim() : '';
     if (pass.length < 6) {
       setError('Password must be at least 6 characters');
       return;
     }
 
-    if (pass !== confirmPassword) {
+    const confirmPass = typeof confirmPassword === 'string' ? confirmPassword.trim() : '';
+    if (pass !== confirmPass) {
       setError('Passwords do not match');
       return;
     }
@@ -175,7 +175,6 @@ export default function Register() {
               Login here
             </Link>
           </p>
-          <p className="mt-2 text-amber-400/50">🔐 Employee credentials are separate from admin panel</p>
         </div>
       </div>
     </div>
