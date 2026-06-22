@@ -1,6 +1,6 @@
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatsCard from '../components/StatsCard';
-import { Users, Wallet, TrendingUp, Landmark, Bell } from 'lucide-react';
+import { Users, Wallet, TrendingUp, Landmark, Bell, Activity } from 'lucide-react';
 
 export default function Dashboard() {
   const { data: stats, loading, error } = useEmployeeData('/api/admin/dashboard-stats');
@@ -26,8 +26,18 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
+          <p className="text-sm text-slate-400">Monitor all user activity in real-time</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500 bg-[#0a0e1a] px-3 py-1.5 rounded-full border border-white/10">
+          <Activity size={12} className="text-emerald-400 animate-pulse" />
+          <span>Live</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <StatsCard label="Total Users" value={data.totalUsers || 0} icon={Users} />
         <StatsCard label="Pending Deposits" value={data.pendingDeposits || 0} icon={Wallet} tone="text-amber-300" />
         <StatsCard label="Active Trades" value={data.totalTrades || 0} icon={TrendingUp} tone="text-cyan-300" />
