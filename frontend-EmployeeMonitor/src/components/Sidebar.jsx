@@ -8,6 +8,7 @@ import {
   Landmark,
   Bell,
   X,
+  LogOut,
 } from 'lucide-react';
 
 const navItems = [
@@ -21,6 +22,15 @@ const navItems = [
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('employeeEmail');
+    localStorage.removeItem('employeeName');
+    localStorage.removeItem('employeeSession');
+    window.location.href = '/login';
+  };
+
   return (
     <>
       {isOpen && (
@@ -28,23 +38,30 @@ export default function Sidebar({ isOpen, onClose }) {
       )}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-64 bg-[#0a0e1a] border-r border-white/10 z-50
+          fixed top-0 left-0 h-full w-[280px] bg-[#0a0e1a] border-r border-white/10 z-50
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:static lg:z-auto
         `}
       >
         <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <span className="text-xl font-bold text-cyan-400">VexaTrade</span>
+          <div>
+            <span className="text-lg font-bold text-cyan-400">VexaTrade</span>
+            <p className="text-[10px] text-slate-500">Employee Monitor</p>
+          </div>
           <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white">
             <X size={24} />
           </button>
         </div>
-        <nav className="p-3 space-y-1">
+
+        <nav className="p-3 space-y-1 overflow-y-auto h-[calc(100%-140px)]">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => {
+                if (window.innerWidth < 1024) onClose();
+              }}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                   isActive
@@ -58,9 +75,16 @@ export default function Sidebar({ isOpen, onClose }) {
             </NavLink>
           ))}
         </nav>
-        <div className="absolute bottom-4 left-4 right-4 text-xs text-slate-500 border-t border-white/10 pt-4">
-          <p>Employee Monitor</p>
-          <p className="text-[10px]">Read‑only · v1.0</p>
+
+        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-white/10 bg-[#050812]">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition w-full"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
+          <p className="text-[9px] text-slate-500 mt-2 text-center">Read-only · v1.0</p>
         </div>
       </aside>
     </>
