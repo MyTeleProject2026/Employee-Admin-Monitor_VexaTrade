@@ -1,4 +1,3 @@
-// src/pages/components/Layout.jsx
 import { useState } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from './Sidebar';
