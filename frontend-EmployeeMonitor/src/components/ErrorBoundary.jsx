@@ -3,7 +3,7 @@ import React from 'react';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -13,13 +13,14 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error('❌ Application Error:', error);
     console.error('Error Info:', errorInfo);
+    this.setState({ errorInfo });
   }
 
   render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-[#050812] flex items-center justify-center p-4">
-          <div className="max-w-md w-full rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-center">
+          <div className="max-w-2xl w-full rounded-2xl border border-red-500/20 bg-red-500/10 p-6">
             <div className="text-4xl mb-4">⚠️</div>
             <h2 className="text-xl font-bold text-white mb-2">Something went wrong</h2>
             <p className="text-sm text-slate-400 mb-4">
@@ -31,9 +32,12 @@ class ErrorBoundary extends React.Component {
             >
               Refresh Page
             </button>
-            <pre className="mt-4 text-xs text-red-300 text-left overflow-auto max-h-40 p-2 bg-black/50 rounded-lg">
-              {this.state.error?.message || 'Unknown error'}
-            </pre>
+            <div className="mt-4 p-3 bg-black/50 rounded-lg overflow-auto max-h-60">
+              <p className="text-red-300 font-mono text-sm">{this.state.error?.message}</p>
+              <pre className="text-xs text-slate-300 whitespace-pre-wrap mt-2">
+                {this.state.errorInfo?.componentStack || this.state.error?.stack}
+              </pre>
+            </div>
           </div>
         </div>
       );
