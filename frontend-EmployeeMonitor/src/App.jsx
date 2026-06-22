@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import UsersList from './pages/UsersList';
 import UserDetail from './pages/UserDetail';
@@ -9,12 +10,14 @@ import WithdrawalsList from './pages/WithdrawalsList';
 import TradesList from './pages/TradesList';
 import FundsList from './pages/FundsList';
 import NotificationsList from './pages/NotificationsList';
+import UserManagement from './pages/UserManagement';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route
         path="/*"
         element={
@@ -30,6 +33,7 @@ function App() {
                 <Route path="/trades" element={<TradesList />} />
                 <Route path="/funds" element={<FundsList />} />
                 <Route path="/notifications" element={<NotificationsList />} />
+                <Route path="/user-management" element={<UserManagement />} />
               </Routes>
             </Layout>
           </ProtectedRoute>
