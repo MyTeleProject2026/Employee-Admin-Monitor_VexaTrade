@@ -6,19 +6,33 @@ import StatusBadge from './components/StatusBadge';
 
 export default function UsersList() {
   const navigate = useNavigate();
-  const { data: users, loading } = useEmployeeData('/admin/users');
+  const { data: users, loading, error } = useEmployeeData('/api/admin/users');
   const [search, setSearch] = useState('');
-  
-  const filteredUsers = Array.isArray(users) ?
-    users.filter(u =>
-      u.name?.toLowerCase().includes(search.toLowerCase()) ||
-      u.email?.toLowerCase().includes(search.toLowerCase()) ||
-      u.uid?.toLowerCase().includes(search.toLowerCase())
-    ) :
-    [];
-  
-  if (loading) return <div className="text-slate-400">Loading users...</div>;
-  
+
+  const filteredUsers = Array.isArray(users)
+    ? users.filter(u =>
+        u.name?.toLowerCase().includes(search.toLowerCase()) ||
+        u.email?.toLowerCase().includes(search.toLowerCase()) ||
+        u.uid?.toLowerCase().includes(search.toLowerCase())
+      )
+    : [];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-400 animate-pulse">Loading users...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
+        Error loading users: {error}
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -45,7 +59,9 @@ export default function UsersList() {
           </thead>
           <tbody>
             {filteredUsers.length === 0 ? (
-              <tr><td colSpan="5" className="px-4 py-6 text-center text-slate-500">No users found.</td></tr>
+              <tr>
+                <td colSpan="5" className="px-4 py-6 text-center text-slate-500">No users found.</td>
+              </tr>
             ) : (
               filteredUsers.map((user) => (
                 <tr key={user.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
