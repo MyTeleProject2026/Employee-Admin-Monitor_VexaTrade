@@ -1,7 +1,7 @@
 export default function StatusBadge({ status }) {
   // Safe string conversion
   const value = typeof status === 'string' ? status.toLowerCase() : '';
-  
+
   const getStyles = () => {
     if (['active', 'completed', 'approved', 'success', 'read', 'win'].includes(value))
       return 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300';
