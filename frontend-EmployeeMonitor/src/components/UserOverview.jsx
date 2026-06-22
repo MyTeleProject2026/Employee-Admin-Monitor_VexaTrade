@@ -24,16 +24,6 @@ export default function UserOverview({ user }) {
             <div className="text-xs text-slate-500">Available balance</div>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-          <div className="rounded-lg border border-white/10 bg-[#050812] p-2">
-            <div className="text-slate-500">Locked</div>
-            <div className="text-white">{user.locked_balance || '0.00'} USDT</div>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-[#050812] p-2">
-            <div className="text-slate-500">Total</div>
-            <div className="text-white">{user.total_balance || '0.00'} USDT</div>
-          </div>
-        </div>
       </div>
     </div>
   );
