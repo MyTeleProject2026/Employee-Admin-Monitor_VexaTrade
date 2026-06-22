@@ -1,4 +1,4 @@
-import { useEmployeeData } from '../../hooks/useEmployeeData';
+import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
 
 export default function TradesTab({ userId }) {
