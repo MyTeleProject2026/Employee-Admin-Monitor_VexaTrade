@@ -22,7 +22,7 @@ export default function BottomNav() {
               }`
             }
           >
-            <item.icon size={18} />
+            <item.icon size={18} className={isActive ? 'text-cyan-400' : 'text-slate-500'} />
             <span className="mt-0.5">{item.label}</span>
           </NavLink>
         ))}
