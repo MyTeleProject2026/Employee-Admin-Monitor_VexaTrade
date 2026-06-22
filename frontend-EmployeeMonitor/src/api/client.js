@@ -11,7 +11,10 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+  // First try employee token, then admin token
+  const token = localStorage.getItem('adminToken') || 
+                localStorage.getItem('token') || 
+                localStorage.getItem('employeeToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,10 +25,15 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401) {
-      // Clear invalid token and redirect to login
       localStorage.removeItem('adminToken');
       localStorage.removeItem('token');
-      if (window.location.pathname !== '/login') {
+      localStorage.removeItem('employeeToken');
+      localStorage.removeItem('employeeEmail');
+      localStorage.removeItem('employeeName');
+      localStorage.removeItem('employeeSession');
+      localStorage.removeItem('employeeId');
+      localStorage.removeItem('assignedUsers');
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
         window.location.href = '/login';
       }
     }
