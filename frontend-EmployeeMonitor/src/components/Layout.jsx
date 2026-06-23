@@ -24,7 +24,7 @@ export default function Layout({ children }) {
       localStorage.removeItem('employeeSession');
       localStorage.removeItem('employeeId');
       localStorage.removeItem('assignedUsers');
-    } catch (e) { /* ignore */ }
+    } catch (_) { /* ignore */ }
     navigate('/login');
   };
 
