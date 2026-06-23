@@ -1,4 +1,4 @@
-// frontend-EmployeeMonitor/src/utils/helpers.js
+// src/utils/helpers.js
 export function safeTrim(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
