@@ -1,3 +1,4 @@
+// src/pages/UserDetail.jsx
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Wallet, ArrowUpCircle, TrendingUp, Landmark, Bell } from 'lucide-react';
@@ -9,6 +10,7 @@ import WithdrawalsTab from '../components/WithdrawalsTab';
 import TradesTab from '../components/TradesTab';
 import FundsTab from '../components/FundsTab';
 import NotificationsTab from '../components/NotificationsTab';
+import { safeString } from '../utils/helpers';
 
 const tabs = [
   { key: 'overview', label: 'Overview', icon: User },
@@ -30,17 +32,15 @@ export default function UserDetail() {
   if (error) return <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">Error loading user: {error}</div>;
   if (!user) return <div className="text-red-400">User not found.</div>;
 
-  const userName = user?.name || 'Unnamed User';
-  const userUid = user?.uid || '—';
-  const userEmail = user?.email || '—';
+  const userName = safeString(user?.name, 'Unnamed User');
+  const userUid = safeString(user?.uid, '—');
+  const userEmail = safeString(user?.email, '—');
   const userStatus = user?.status || 'Active';
   const userBalance = user?.balance || '0.00';
 
   return (
     <div>
-      <button onClick={() => navigate('/users')} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-4 transition">
-        <ArrowLeft size={16} /> Back to Users
-      </button>
+      <button onClick={() => navigate('/users')} className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-4 transition"><ArrowLeft size={16} /> Back to Users</button>
       <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 mb-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
@@ -53,10 +53,7 @@ export default function UserDetail() {
               <StatusBadge status={userStatus} />
             </div>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Wallet size={16} className="text-cyan-400" />
-            <span className="text-white font-semibold">{userBalance} USDT</span>
-          </div>
+          <div className="flex items-center gap-2 text-sm"><Wallet size={16} className="text-cyan-400" /><span className="text-white font-semibold">{userBalance} USDT</span></div>
         </div>
       </div>
       <div className="flex overflow-x-auto gap-1 border-b border-white/10 mb-4 pb-0.5">
