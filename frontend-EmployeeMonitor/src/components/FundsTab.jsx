@@ -1,5 +1,7 @@
+// src/components/FundsTab.jsx
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
+import { safeString } from '../utils/helpers';
 
 export default function FundsTab({ userId }) {
   const { data: allFunds, loading, error } = useEmployeeData('/api/admin/funds');
@@ -8,12 +10,7 @@ export default function FundsTab({ userId }) {
   if (loading) return <div className="flex items-center justify-center h-32"><div className="text-slate-400 animate-pulse">Loading funds...</div></div>;
   if (error) return <div className="text-red-400">Error loading funds: {error}</div>;
   if (funds.length === 0) {
-    return (
-      <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
-        <div className="text-4xl mb-3">🏦</div>
-        <p>No fund applications</p>
-      </div>
-    );
+    return <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400"><div className="text-4xl mb-3">🏦</div><p>No fund applications</p></div>;
   }
 
   return (
@@ -22,7 +19,7 @@ export default function FundsTab({ userId }) {
         <div key={fund.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-white truncate max-w-[140px]">{typeof fund.plan_name === 'string' ? fund.plan_name : '—'}</span>
+              <span className="text-sm font-semibold text-white truncate max-w-[140px]">{safeString(fund.plan_name, '—')}</span>
               <StatusBadge status={fund.status} />
             </div>
             <span className="text-sm font-bold text-white">{fund.locked_principal}</span>
