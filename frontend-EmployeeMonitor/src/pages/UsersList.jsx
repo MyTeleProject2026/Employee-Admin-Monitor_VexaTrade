@@ -1,8 +1,10 @@
+// src/pages/UsersList.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, Search } from 'lucide-react';
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from '../components/StatusBadge';
+import { safeLowerCase } from '../utils/helpers';
 
 export default function UsersList() {
   const navigate = useNavigate();
@@ -11,10 +13,10 @@ export default function UsersList() {
 
   const filteredUsers = Array.isArray(users)
     ? users.filter(u => {
-        const name = (u?.name || '').toLowerCase();
-        const email = (u?.email || '').toLowerCase();
-        const uid = (u?.uid || '').toLowerCase();
-        const term = (search || '').toLowerCase();
+        const name = safeLowerCase(u?.name);
+        const email = safeLowerCase(u?.email);
+        const uid = safeLowerCase(u?.uid);
+        const term = safeLowerCase(search);
         return name.includes(term) || email.includes(term) || uid.includes(term);
       })
     : [];
@@ -28,16 +30,9 @@ export default function UsersList() {
         <h1 className="text-xl sm:text-2xl font-bold">Monitored Users</h1>
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value || '')}
-            className="w-full sm:w-56 rounded-xl border border-white/10 bg-[#0a0e1a] pl-9 pr-3 py-2 text-sm text-white outline-none focus:border-cyan-500"
-          />
+          <input type="text" placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value || '')} className="w-full sm:w-56 rounded-xl border border-white/10 bg-[#0a0e1a] pl-9 pr-3 py-2 text-sm text-white outline-none focus:border-cyan-500" />
         </div>
       </div>
-
       {filteredUsers.length === 0 ? (
         <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
           <div className="text-4xl mb-3">👤</div>
@@ -60,12 +55,7 @@ export default function UsersList() {
                     <span className="truncate">{user?.email || '—'}</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => navigate(`/users/${user?.id}`)}
-                  className="shrink-0 ml-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
-                >
-                  <Eye size={14} className="inline mr-1" /> View
-                </button>
+                <button onClick={() => navigate(`/users/${user?.id}`)} className="shrink-0 ml-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"><Eye size={14} className="inline mr-1" /> View</button>
               </div>
             </div>
           ))}
