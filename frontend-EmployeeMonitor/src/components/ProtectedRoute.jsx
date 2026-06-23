@@ -21,8 +21,7 @@ export default function ProtectedRoute({ children }) {
       return <Navigate to="/login" replace />;
     }
     return children;
-  } catch (error) {
-    console.error('ProtectedRoute error:', error);
+  } catch (_) {
     return <Navigate to="/login" replace />;
   }
 }
