@@ -1,3 +1,4 @@
+// frontend-EmployeeMonitor/src/components/BottomNav.jsx
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, Wallet, Bell } from 'lucide-react';
 
@@ -16,7 +17,12 @@ export default function BottomNav() {
           <NavLink
             key={item.path}
             to={item.path}
-            className={({ isActive }) => `flex flex-col items-center justify-center w-full h-full text-[10px] transition ${isActive ? 'text-cyan-400' : 'text-slate-500'}`}
+            className={({ isActive }) => {
+              // ✅ isActive is properly defined here
+              return `flex flex-col items-center justify-center w-full h-full text-[10px] transition ${
+                isActive ? 'text-cyan-400' : 'text-slate-500'
+              }`;
+            }}
           >
             <item.icon size={18} className={isActive ? 'text-cyan-400' : 'text-slate-500'} />
             <span className="mt-0.5">{item.label}</span>
