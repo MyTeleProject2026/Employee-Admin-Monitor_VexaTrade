@@ -1,3 +1,4 @@
+// src/pages/Dashboard.jsx
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatsCard from '../components/StatsCard';
 import { Users, Wallet, TrendingUp, Landmark, Bell, Activity } from 'lucide-react';
