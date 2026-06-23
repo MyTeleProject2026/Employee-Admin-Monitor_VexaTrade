@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('employeeSession');
         localStorage.removeItem('employeeId');
         localStorage.removeItem('assignedUsers');
-      } catch (e) { /* ignore */ }
+      } catch (_) { /* ignore */ }
       if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
         window.location.href = '/login';
       }
