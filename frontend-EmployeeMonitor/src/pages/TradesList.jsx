@@ -1,75 +1,70 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye, Search } from 'lucide-react';
 import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from '../components/StatusBadge';
-import { safeTrim, safeLowerCase } from '../utils/helpers';
 
-export default function UsersList() {
-  const navigate = useNavigate();
-  const { data: users, loading, error } = useEmployeeData('/api/admin/users');
-  const [search, setSearch] = useState('');
+export default function TradesList() {
+  const { data: trades, loading, error } = useEmployeeData('/api/admin/trades');
 
-  const filteredUsers = Array.isArray(users)
-    ? users.filter(u => {
-        const name = safeLowerCase(u?.name);
-        const email = safeLowerCase(u?.email);
-        const uid = safeLowerCase(u?.uid);
-        const term = safeLowerCase(search);
-        return name.includes(term) || email.includes(term) || uid.includes(term);
-      })
-    : [];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-400 animate-pulse">Loading trades...</div>
+      </div>
+    );
+  }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-slate-400 animate-pulse">Loading users...</div></div>;
-  if (error) return <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">Error loading users: {error}</div>;
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
+        Error loading trades: {error}
+      </div>
+    );
+  }
+
+  const items = Array.isArray(trades) ? trades : [];
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h1 className="text-xl sm:text-2xl font-bold">Monitored Users</h1>
-        <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search users..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value || '')}
-            className="w-full sm:w-56 rounded-xl border border-white/10 bg-[#0a0e1a] pl-9 pr-3 py-2 text-sm text-white outline-none focus:border-cyan-500"
-          />
-        </div>
-      </div>
+      <h1 className="text-xl sm:text-2xl font-bold mb-4">All Trades</h1>
 
-      {filteredUsers.length === 0 ? (
+      {items.length === 0 ? (
         <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400">
-          <div className="text-4xl mb-3">👤</div>
-          <p>No users found</p>
-          <p className="text-xs mt-1">Add users from User Management page</p>
+          <div className="text-4xl mb-3">📈</div>
+          <p>No trades found</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredUsers.map((user) => (
-            <div key={user?.id || Math.random()} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4 hover:border-white/20 transition">
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-white truncate">{user?.name || '—'}</span>
-                    <StatusBadge status={user?.status || 'Active'} />
+          {items.map((trade) => {
+            const profit = Number(trade.profit || 0);
+            return (
+              <div key={trade.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-white">{trade.pair || '—'}</span>
+                    <span className="text-xs text-slate-400 capitalize">{trade.direction || '—'}</span>
                   </div>
-                  <div className="mt-1 text-xs text-slate-400">
-                    <span className="font-mono">{user?.uid || '—'}</span>
-                    <span className="mx-2">•</span>
-                    <span className="truncate">{user?.email || '—'}</span>
+                  <StatusBadge status={trade.status || trade.result} />
+                </div>
+                <div className="grid grid-cols-2 gap-1 text-xs">
+                  <div>
+                    <span className="text-slate-500">User:</span> <span className="text-white">{trade.user_id}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Amount:</span> <span className="text-white">{trade.amount}</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-slate-500">Profit/Loss:</span>{' '}
+                    <span className={profit >= 0 ? 'text-emerald-300' : 'text-red-300'}>
+                      {profit >= 0 ? '+' : ''}{profit.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-slate-500">Date:</span>{' '}
+                    <span className="text-white">{new Date(trade.created_at).toLocaleString()}</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => navigate(`/users/${user?.id}`)}
-                  className="shrink-0 ml-3 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
-                >
-                  <Eye size={14} className="inline mr-1" /> View
-                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
