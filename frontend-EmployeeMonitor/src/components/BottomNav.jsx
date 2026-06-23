@@ -11,18 +11,17 @@ const navItems = [
 export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#0a0e1a] border-t border-white/10 lg:hidden">
-      <div className="flex justify-around items-center h-16">
+      <div className="flex justify-around items-center h-14">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
-            className={({ isActive }) =>
-              `flex flex-col items-center justify-center w-full h-full text-xs transition ${
-                isActive ? 'text-cyan-400' : 'text-slate-500'
-              }`
-            }
+            className={({ isActive }) => {
+              const active = typeof isActive === 'boolean' ? isActive : false;
+              return `flex flex-col items-center justify-center w-full h-full text-[10px] transition ${active ? 'text-cyan-400' : 'text-slate-500'}`;
+            }}
           >
-            <item.icon size={20} />
+            <item.icon size={18} className={({ isActive }) => (typeof isActive === 'boolean' && isActive ? 'text-cyan-400' : 'text-slate-500')} />
             <span className="mt-0.5">{item.label}</span>
           </NavLink>
         ))}

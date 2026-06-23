@@ -1,41 +1,36 @@
-import { useEmployeeData } from '../../hooks/useEmployeeData';
+// src/components/FundsTab.jsx
+import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
+import { safeString } from '../utils/helpers';
 
 export default function FundsTab({ userId }) {
-  const { data: funds, loading } = useEmployeeData(`/admin/funds?user_id=${userId}`);
-  
-  if (loading) return <div className="text-slate-400">Loading funds...</div>;
-  
+  const { data: allFunds, loading, error } = useEmployeeData('/api/admin/funds');
+  const funds = Array.isArray(allFunds) ? allFunds.filter(f => f.user_id === parseInt(userId)) : [];
+
+  if (loading) return <div className="flex items-center justify-center h-32"><div className="text-slate-400 animate-pulse">Loading funds...</div></div>;
+  if (error) return <div className="text-red-400">Error loading funds: {error}</div>;
+  if (funds.length === 0) {
+    return <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400"><div className="text-4xl mb-3">🏦</div><p>No fund applications</p></div>;
+  }
+
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="border-b border-white/10 bg-[#050812]">
-          <tr>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Plan</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Amount</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">APY</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Day</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Status</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {funds?.length === 0 ? (
-            <tr><td colSpan="6" className="px-4 py-6 text-center text-slate-500">No fund applications.</td></tr>
-          ) : (
-            funds?.map((fund) => (
-              <tr key={fund.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-                <td className="px-4 py-3 text-white">{fund.plan_name || '—'}</td>
-                <td className="px-4 py-3 text-white">{fund.locked_principal}</td>
-                <td className="px-4 py-3 text-emerald-300">{fund.apy || '—'}%</td>
-                <td className="px-4 py-3 text-white">{fund.current_day}/{fund.total_days}</td>
-                <td className="px-4 py-3"><StatusBadge status={fund.status} /></td>
-                <td className="px-4 py-3 text-slate-400 text-xs">{new Date(fund.created_at).toLocaleString()}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+    <div className="space-y-3">
+      {funds.map((fund) => (
+        <div key={fund.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-white truncate max-w-[140px]">{safeString(fund.plan_name, '—')}</span>
+              <StatusBadge status={fund.status} />
+            </div>
+            <span className="text-sm font-bold text-white">{fund.locked_principal}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1 text-xs">
+            <div><span className="text-slate-500">APY:</span> <span className="text-emerald-300">{fund.apy || '—'}%</span></div>
+            <div><span className="text-slate-500">Day:</span> <span className="text-white">{fund.current_day}/{fund.total_days}</span></div>
+            <div className="col-span-2"><span className="text-slate-500">Date:</span> {new Date(fund.created_at).toLocaleString()}</div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

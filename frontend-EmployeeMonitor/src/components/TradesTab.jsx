@@ -1,43 +1,39 @@
-import { useEmployeeData } from '../../hooks/useEmployeeData';
+// src/components/TradesTab.jsx
+import { useEmployeeData } from '../hooks/useEmployeeData';
 import StatusBadge from './StatusBadge';
+import { safeString } from '../utils/helpers';
 
 export default function TradesTab({ userId }) {
-  const { data: trades, loading } = useEmployeeData(`/admin/trades?user_id=${userId}`);
-  
-  if (loading) return <div className="text-slate-400">Loading trades...</div>;
-  
+  const { data: allTrades, loading, error } = useEmployeeData('/api/admin/trades');
+  const trades = Array.isArray(allTrades) ? allTrades.filter(t => t.user_id === parseInt(userId)) : [];
+
+  if (loading) return <div className="flex items-center justify-center h-32"><div className="text-slate-400 animate-pulse">Loading trades...</div></div>;
+  if (error) return <div className="text-red-400">Error loading trades: {error}</div>;
+  if (trades.length === 0) {
+    return <div className="rounded-xl border border-white/10 bg-[#0a0e1a] p-8 text-center text-slate-400"><div className="text-4xl mb-3">📈</div><p>No trades found</p></div>;
+  }
+
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0a0e1a] overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="border-b border-white/10 bg-[#050812]">
-          <tr>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Pair</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Direction</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Amount</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Profit/Loss</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Status</th>
-            <th className="px-4 py-3 text-left text-slate-400 font-medium">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {trades?.length === 0 ? (
-            <tr><td colSpan="6" className="px-4 py-6 text-center text-slate-500">No trades.</td></tr>
-          ) : (
-            trades?.map((trade) => (
-              <tr key={trade.id} className="border-b border-white/5 last:border-0 hover:bg-white/5">
-                <td className="px-4 py-3 text-white">{trade.pair || '—'}</td>
-                <td className="px-4 py-3 text-white capitalize">{trade.direction || '—'}</td>
-                <td className="px-4 py-3 text-white">{trade.amount}</td>
-                <td className={`px-4 py-3 ${Number(trade.profit || 0) >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
-                  {trade.profit ? (Number(trade.profit) >= 0 ? '+' : '') + trade.profit : '—'}
-                </td>
-                <td className="px-4 py-3"><StatusBadge status={trade.status || trade.result} /></td>
-                <td className="px-4 py-3 text-slate-400 text-xs">{new Date(trade.created_at).toLocaleString()}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+    <div className="space-y-3">
+      {trades.map((trade) => {
+        const profit = Number(trade.profit || 0);
+        return (
+          <div key={trade.id} className="rounded-xl border border-white/10 bg-[#0a0e1a] p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-white">{safeString(trade.pair, '—')}</span>
+                <span className="text-xs text-slate-400 capitalize">{safeString(trade.direction, '—')}</span>
+              </div>
+              <StatusBadge status={trade.status || trade.result} />
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-xs">
+              <div><span className="text-slate-500">Amount:</span> <span className="text-white">{trade.amount}</span></div>
+              <div><span className="text-slate-500">Profit/Loss:</span> <span className={profit >= 0 ? 'text-emerald-300' : 'text-red-300'}>{profit >= 0 ? '+' : ''}{profit.toFixed(2)}</span></div>
+              <div className="col-span-2"><span className="text-slate-500">Date:</span> {new Date(trade.created_at).toLocaleString()}</div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
