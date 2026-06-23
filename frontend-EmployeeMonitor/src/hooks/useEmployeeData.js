@@ -15,7 +15,6 @@ export function useEmployeeData(endpoint, dependencies = []) {
         if (endpoint.startsWith('/api/admin')) {
           employeeEndpoint = endpoint.replace('/api/admin', '/api/employee');
         }
-        console.log(`[useEmployeeData] Fetching: ${employeeEndpoint}`);
         const res = await apiClient.get(employeeEndpoint);
         let responseData = res.data?.data !== undefined ? res.data.data : res.data;
         if (responseData === null || responseData === undefined) {
