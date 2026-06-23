@@ -1,3 +1,4 @@
+// frontend-EmployeeMonitor/src/pages/Login.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Lock, User, Shield } from 'lucide-react';
@@ -22,9 +23,7 @@ export default function Login() {
       localStorage.removeItem('employeeSession');
       localStorage.removeItem('employeeId');
       localStorage.removeItem('assignedUsers');
-    } catch (e) {
-      console.log('Clear storage error:', e);
-    }
+    } catch (e) { /* ignore */ }
   }, []);
 
   const handleSubmit = async (e) => {
@@ -49,11 +48,7 @@ export default function Login() {
     const email = `${name}@VexaTrade`;
 
     try {
-      const res = await apiClient.post('/api/employee/login', {
-        email: email,
-        password: pass,
-      });
-
+      const res = await apiClient.post('/api/employee/login', { email, password: pass });
       if (res.data?.success) {
         const data = res.data.data;
         localStorage.setItem('employeeToken', data.token);
@@ -68,8 +63,7 @@ export default function Login() {
         setError('Login failed. Please try again.');
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+      setError(err.response?.data?.message || 'Invalid credentials.');
     } finally {
       setLoading(false);
     }
