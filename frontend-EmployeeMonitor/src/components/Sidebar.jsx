@@ -1,4 +1,3 @@
-// frontend-EmployeeMonitor/src/components/Sidebar.jsx
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -35,7 +34,7 @@ export default function Sidebar({ isOpen, onClose }) {
       localStorage.removeItem('employeeSession');
       localStorage.removeItem('employeeId');
       localStorage.removeItem('assignedUsers');
-    } catch (e) { /* ignore */ }
+    } catch (_) { /* ignore */ }
     window.location.href = '/login';
   };
 
@@ -67,11 +66,9 @@ export default function Sidebar({ isOpen, onClose }) {
             <NavLink
               key={item.path}
               to={item.path}
-              onClick={() => {
-                if (window.innerWidth < 1024) onClose();
-              }}
+              onClick={() => { if (window.innerWidth < 1024) onClose(); }}
               className={({ isActive }) => {
-                // ✅ Safe: treat missing isActive as false
+                // ✅ SAFE: treat missing isActive as false
                 const active = typeof isActive === 'boolean' ? isActive : false;
                 return `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                   active
