@@ -18,14 +18,12 @@ export default function BottomNav() {
             key={item.path}
             to={item.path}
             className={({ isActive }) => {
-              // ✅ Safe check for isActive
-              const active = isActive || false;
               return `flex flex-col items-center justify-center w-full h-full text-[10px] transition ${
-                active ? 'text-cyan-400' : 'text-slate-500'
+                isActive ? 'text-cyan-400' : 'text-slate-500'
               }`;
             }}
           >
-            <item.icon size={18} className={({ isActive }) => (isActive ? 'text-cyan-400' : 'text-slate-500')} />
+            <item.icon size={18} className={isActive ? 'text-cyan-400' : 'text-slate-500'} />
             <span className="mt-0.5">{item.label}</span>
           </NavLink>
         ))}
